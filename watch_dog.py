@@ -2,6 +2,22 @@ import time, os
 import subprocess
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler, PatternMatchingEventHandler
+import logging
+import psutil
+
+logging.basicConfig(filename='service.log', level=logging.INFO)
+
+
+def log_process_info():
+    pid = os.getpid()
+    ppid = os.getppid()
+    process = psutil.Process(pid)
+    parent_process = psutil.Process(ppid)
+    logging.info(f"Current PID: {pid}, Parent PID: {ppid}")
+    logging.info(f"Current Process: {process.name()}, Parent Process: {parent_process.name()}")
+
+log_process_info()
+logging.info("Starting the Monitoring service...")
 
 class Watcher:
 
@@ -19,6 +35,8 @@ class Watcher:
                 time.sleep(5)
         except KeyboardInterrupt:
             self.observer.stop()
+            log_process_info()
+            logging.info("Stopping the Monitoring service...")
         self.observer.join()
 
 class Handler(PatternMatchingEventHandler, FileSystemEventHandler):
@@ -32,8 +50,9 @@ class Handler(PatternMatchingEventHandler, FileSystemEventHandler):
             return None
         elif event.event_type == 'created' or event.event_type == 'modified':
             # Run your Docker container
-            print(f"Received event - {event.event_type}: {event.src_path}")
-            print("running your docker container...")
+            log_process_info()
+            logging.info(f"Received event - {event.event_type}: {event.src_path}")
+            logging.info("running python script to update the html page...")
             subprocess.run(self.commands_)
 
 
@@ -43,7 +62,7 @@ if __name__ == '__main__':
     parser.add_argument('--dir', type=str, help='directory path', default='.')
     parser.add_argument('--file_format', type=list, help='file_format, eg: csv, json, xml in list. ["*.csv",".xml"] ', default=["*.csv"])
     parser.add_argument('--commands_', type=list, help='command to execute on events of specific file format ', 
-    default=['docker', 'start', 'update_important_urls_html_page'])
+    default=['python', 'C:\\Users\\2307995\\Documents\\DataDrivenCVAutomation\\URI_DataTables\\datatable.py'])
     args = parser.parse_args()
     w = Watcher(args.dir)
     w.run(args.commands_)

@@ -34,7 +34,7 @@ class WatchDogService(win32serviceutil.ServiceFramework):
     def main(self):
         while self.running:
             logging.info('Running watch_dog.py')
-            os.system("python watch_dog.py --dir C:\Users\2307995\Documents\DataDrivenCVAutomation\URI_DataTables\data")
+            os.system("python watch_dog.py --dir C:\\Users\\2307995\\Documents\\DataDrivenCVAutomation\\URI_DataTables\\data")
             time.sleep(5)  # Run every 60 seconds
 
 if __name__ == '__main__':
