@@ -4,6 +4,7 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler, PatternMatchingEventHandler
 import logging
 import psutil
+from datetime import datetime
 
 logging.basicConfig(filename='service.log', level=logging.INFO)
 
@@ -13,6 +14,7 @@ def log_process_info():
     ppid = os.getppid()
     process = psutil.Process(pid)
     parent_process = psutil.Process(ppid)
+    logging.info(f"Current Time: {datetime.now()}")
     logging.info(f"Current PID: {pid}, Parent PID: {ppid}")
     logging.info(f"Current Process: {process.name()}, Parent Process: {parent_process.name()}")
 
